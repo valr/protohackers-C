@@ -93,7 +93,7 @@ static void handle_connection(int conn)
     }
 
     while(fgets(request, sizeof(request), file) != NULL) {
-        // printf("\n---request conn %d---\n%s\n", conn, request);
+        // printf("\n---request connection %d---\n%s\n", conn, request);
         // fflush(stdout);
 
         request_status = process_request(request, reply, sizeof(reply));
