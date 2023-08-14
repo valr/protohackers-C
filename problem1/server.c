@@ -1,6 +1,6 @@
 /*
 https://protohackers.com/problem/1
-cc -oserver server.c -lm `pkg-config --cflags --libs jansson` && ./server 8007
+cc -oserver server.c -lm `pkg-config --cflags --libs jansson` && ./server 8007 &> server.out
 */
 
 #include <jansson.h>
