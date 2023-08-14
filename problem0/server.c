@@ -14,7 +14,7 @@ static void handle_connection(int conn)
     int data_len;
 
     while ((data_len = read(conn, data, sizeof(data))) > 0) {
-        printf("\n---data conn %d---", conn);
+        printf("\n---data connection %d---\n", conn);
         fwrite(data, data_len, 1, stdout);
         fflush(stdout);
 
