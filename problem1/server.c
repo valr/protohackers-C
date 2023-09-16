@@ -1,7 +1,6 @@
-/*
-https://protohackers.com/problem/1
-cc -oserver server.c -lm `pkg-config --cflags --libs jansson` && ./server 8007 &> server.out
-*/
+/* https://protohackers.com/problem/1
+ * cc -oserver server.c -lm `pkg-config --cflags --libs jansson` && ./server 8007
+ */
 
 #include <jansson.h>
 #include <math.h>
@@ -42,13 +41,13 @@ static int process_request(const char *request, char *reply, size_t reply_size)
 
     if (json_is_string(json_method) != 0 && strcmp(json_string_value(json_method), "isPrime") == 0 &&
         json_is_real(json_number) != 0) {
-        // conforming request:
-        // has field "method" containing "isPrime"
-        // has field "number" containing valid JSON number
+        /* conforming request:
+         * has field "method" containing "isPrime"
+         * has field "number" containing valid JSON number */
 
-        // conforming reply:
-        // has field "method" containing "isPrime"
-        // has field "prime" containing boolean (true or false)
+        /* conforming reply:
+         * has field "method" containing "isPrime"
+         * has field "prime" containing boolean (true or false) */
 
         int prime = number_is_prime(json_real_value(json_number));
 
@@ -60,13 +59,13 @@ static int process_request(const char *request, char *reply, size_t reply_size)
 
         return 0;
     } else {
-        // malformed request:
-        // invalid JSON object
-        // missing field method/number
-        // invalid method/number
+        /* malformed request:
+         * invalid JSON object
+         * missing field method/number
+         * invalid method/number */
 
-        // malformed reply (simplified):
-        // {"method": "isPrime", "error": "invalid request"}
+        /* malformed reply (simplified):
+         * {"method": "isPrime", "error": "invalid request"} */
 
         json_reply = json_pack("{s, s, s, s}", "method", "isPrime", "error", "invalid request");
         strcpy(&reply[json_dumpb(json_reply, reply, reply_size, 0)],"\n\0");
@@ -77,8 +76,8 @@ static int process_request(const char *request, char *reply, size_t reply_size)
         return -1;
     }
 
-    // return conforming or malformed reply
-    // which is a single line containing JSON object terminated by newline
+    /* return conforming or malformed reply
+     * which is a single line containing JSON object terminated by newline */
 }
 
 static void handle_connection(int conn)
@@ -93,9 +92,6 @@ static void handle_connection(int conn)
     }
 
     while(fgets(request, sizeof(request), file) != NULL) {
-        // printf("\n---request connection %d---\n%s\n", conn, request);
-        // fflush(stdout);
-
         request_status = process_request(request, reply, sizeof(reply));
 
         if (send(conn, reply, strlen(reply), 0) < 0) {

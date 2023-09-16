@@ -1,5 +1,5 @@
-// https://protohackers.com/problem/0
-// cc -oserver server.c && ./server 8007 &> server.out
+/* https://protohackers.com/problem/0
+ * cc -oserver server.c && ./server 8007 */
 
 #include <netinet/in.h>
 #include <stdio.h>
@@ -14,10 +14,6 @@ static void handle_connection(int conn)
     int data_len;
 
     while ((data_len = read(conn, data, sizeof(data))) > 0) {
-        printf("\n---data connection %d---\n", conn);
-        fwrite(data, data_len, 1, stdout);
-        fflush(stdout);
-
         if (send(conn, data, data_len, 0) < 0) {
             perror("send error");
             exit(EXIT_FAILURE);

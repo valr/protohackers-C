@@ -1,4 +1,4 @@
-/*
+/* https://protohackers.com/problem/1
 cc -oclient client.c && ./client 8007 '{"method":"isPrime","number":3}
 {"method":"isPrime","number":643576916629744492749636813248163978082647287841524867798}
 {"method":"isPrime","number":4}

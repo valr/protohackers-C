@@ -1,5 +1,5 @@
-// https://protohackers.com/problem/0
-// cc -oclient client.c && ./client 8007 "hello world!"
+/* https://protohackers.com/problem/0
+ * cc -oclient client.c && ./client 8007 "hello world!" */
 
 #include <arpa/inet.h>
 #include <netinet/in.h>
