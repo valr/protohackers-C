@@ -17,9 +17,7 @@ static sqlite3* create_db(void)
     char *db_err;
     int db_ret;
 
-    db_ret = sqlite3_open(":memory:", &db);
-
-    if (db_ret != SQLITE_OK) {
+    if (sqlite3_open(":memory:", &db) != SQLITE_OK) {
         fprintf(stderr, "sqlite3_open error: %s\n", sqlite3_errmsg(db));
         exit(EXIT_FAILURE);
     }
@@ -27,7 +25,6 @@ static sqlite3* create_db(void)
     db_ret = sqlite3_exec(
         db, "create table prices(timestamp integer not null unique primary key, price integer not null);",
         NULL, NULL, &db_err);
-
     if (db_ret != SQLITE_OK) {
         fprintf(stderr, "sqlite3_exec create table: %s\n", db_err);
         sqlite3_free(db_err);
@@ -39,9 +36,7 @@ static sqlite3* create_db(void)
 
 static void destroy_db(sqlite3 *db)
 {
-    int db_ret = sqlite3_close(db);
-
-    if (db_ret != SQLITE_OK) {
+    if (sqlite3_close(db) != SQLITE_OK) {
         fprintf(stderr, "sqlite3_close error: %s\n", sqlite3_errmsg(db));
         exit(EXIT_FAILURE);
     }
@@ -50,15 +45,12 @@ static void destroy_db(sqlite3 *db)
 static void insert_price(sqlite3 *db, int timestamp, int price)
 {
     char *db_sql, *db_err;
-    int db_ret;
 
     db_sql = sqlite3_mprintf(
         "insert or ignore into prices(timestamp, price) values(%d, %d);",
         timestamp, price);
 
-    db_ret = sqlite3_exec(db, db_sql, NULL, NULL, &db_err);
-
-    if (db_ret != SQLITE_OK) {
+    if (sqlite3_exec(db, db_sql, NULL, NULL, &db_err) != SQLITE_OK) {
         fprintf(stderr, "sqlite3_exec insert: %s\n", db_err);
         sqlite3_free(db_err);
         exit(EXIT_FAILURE);
@@ -69,29 +61,25 @@ static void insert_price(sqlite3 *db, int timestamp, int price)
 
 static int query_price(sqlite3 *db, int timestamp_from, int timestamp_to)
 {
-    char *db_sql, *db_err;
+    char *db_sql;
     int db_ret, mean_price;
     sqlite3_stmt *db_stmt;
 
-    db_sql = sqlite3_mprintf(
+    db_sql = sqlite3_mprintf( /* indeed, I could have used sqlite3_bind_int instead */
         "select round(coalesce(avg(price),0)) from prices where timestamp between %d and %d;",
         timestamp_from, timestamp_to);
 
-    db_ret = sqlite3_prepare_v2(db, db_sql, -1, &db_stmt, NULL);
-
-    if (db_ret != SQLITE_OK) {
+    if ((db_ret = sqlite3_prepare_v2(db, db_sql, -1, &db_stmt, NULL)) != SQLITE_OK) {
         fprintf(stderr, "sqlite3_prepare_v2: %s\n", sqlite3_errstr(db_ret));
         exit(EXIT_FAILURE);
     }
 
-    db_ret = sqlite3_step(db_stmt);
-
-    if (db_ret == SQLITE_ROW) {
-        mean_price = sqlite3_column_int(db_stmt, 0);
-    } else {
+    if ((db_ret = sqlite3_step(db_stmt)) != SQLITE_ROW) {
         fprintf(stderr, "sqlite3_step: %s\n", sqlite3_errstr(db_ret));
         exit(EXIT_FAILURE);
     }
+
+    mean_price = sqlite3_column_int(db_stmt, 0);
 
     sqlite3_finalize(db_stmt);
     sqlite3_free(db_sql);
