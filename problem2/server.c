@@ -87,12 +87,12 @@ static int query_price(sqlite3 *db, int timestamp_from, int timestamp_to)
     return mean_price;
 }
 
-static int read_raw_data(int conn, char *raw_data, int raw_data_len)
+static int read_data(int conn, char *data, int max_data_len)
 {
     int read_len, data_len = 0;
 
     do {
-        if ((read_len = read(conn, raw_data + data_len, raw_data_len - data_len)) < 0) {
+        if ((read_len = read(conn, data + data_len, max_data_len - data_len)) < 0) {
             perror("read error");
             exit(EXIT_FAILURE);
         }
@@ -103,7 +103,7 @@ static int read_raw_data(int conn, char *raw_data, int raw_data_len)
 
         data_len += read_len;
     }
-    while (data_len < raw_data_len);
+    while (data_len < max_data_len);
 
     return data_len;
 }
@@ -125,7 +125,7 @@ static void handle_connection(int conn)
 
     db = create_db();
 
-    while ((data_len = read_raw_data(conn, data.raw, sizeof(data))) == sizeof(data)) {
+    while ((data_len = read_data(conn, data.raw, sizeof(data))) == sizeof(data)) {
         data.msg.int1 = __bswap_32(data.msg.int1);
         data.msg.int2 = __bswap_32(data.msg.int2);
 
