@@ -92,9 +92,7 @@ static int read_raw_data(int conn, char *raw_data, int raw_data_len)
     int read_len, data_len = 0;
 
     do {
-        read_len = read(conn, raw_data + data_len, raw_data_len - data_len);
-
-        if (read_len < 0) {
+        if ((read_len = read(conn, raw_data + data_len, raw_data_len - data_len)) < 0) {
             perror("read error");
             exit(EXIT_FAILURE);
         }
