@@ -1,2 +1,2 @@
 
-# Solutions to Protohackers: <https://protohackers.com/>
+# Solutions to Protohackers in C
